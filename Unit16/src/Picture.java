@@ -5,6 +5,7 @@ import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.text.*;
 import java.util.*;
+import java.lang.Math;
 import java.util.List; // resolves problem with java.awt.List and java.util.List
 
 /**
@@ -366,7 +367,83 @@ public class Picture extends SimplePicture
     }
   }
   
+  public void encode(Picture messagePict) {  
+	  Pixel[][] messagePixels = messagePict.getPixels2D();  
+	  Pixel[][] currPixels = this.getPixels2D();  
+	  Pixel currPixel = null; 
+	  Pixel messagePixel = null; 
+	  int count = 0; 
+	  for (int row = 0; row < this.getHeight(); row++)  { 
+		  for (int col = 0; col < this.getWidth(); col++)  { 
+			  currPixel = currPixels[row][col]; 
+			  if (currPixel.getRed() > 127 && currPixel.getRed() % 2 == 0) {
+				  currPixel.setRed(currPixel.getRed() + 1);  
+			  } 
+			  if (currPixel.getRed() <= 127 && currPixel.getRed() % 2 == 1) {
+				  currPixel.setRed(currPixel.getRed() - 1);  
+			  }
+			  if (currPixel.getGreen() > 127 && currPixel.getGreen() % 2 == 0) {
+				  currPixel.setGreen(currPixel.getGreen() + 1);  
+			  } 
+			  if (currPixel.getGreen() <= 127 && currPixel.getGreen() % 2 == 1) {
+				  currPixel.setGreen(currPixel.getGreen() - 1);  
+			  }
+			  if (currPixel.getBlue() > 127 && currPixel.getBlue() % 2 == 0) {
+				  currPixel.setBlue(currPixel.getBlue() + 1);  
+			  } 
+			  if (currPixel.getBlue() <= 127 && currPixel.getBlue() % 2 == 1) {
+				  currPixel.setBlue(currPixel.getBlue() - 1);  
+			  }
+			  messagePixel = messagePixels[row][col];  
+			  if (messagePixel.colorDistance(Color.BLACK) < 50)  { 
+				  int randomNumber = (int) (Math.random() * 3);
+				  if (randomNumber == 0) {
+					  currPixel.setRed(currPixel.getRed() - (currPixel.getRed() % 2) + ((currPixel.getRed() % 2) + 1) % 2);
+				  } else if (randomNumber == 1) {
+					  currPixel.setGreen(currPixel.getGreen() - (currPixel.getGreen() % 2) + ((currPixel.getGreen() % 2) + 1) % 2);
+				  } else {
+					  currPixel.setBlue(currPixel.getBlue() - (currPixel.getBlue() % 2) + ((currPixel.getBlue() % 2) + 1) % 2);
+				  }
+				  count++; 
+			  } 
+		  } 
+	  } 
+	  System.out.println(count);
+  } 
   
+  public Picture decode() { 
+	  Pixel[][] pixels = this.getPixels2D(); 
+	  int height = this.getHeight(); 
+	  int width = this.getWidth(); 
+	  Pixel currPixel = null;
+	  Pixel messagePixel = null; 
+	  Picture messagePicture = new Picture(height,width);  
+	  Pixel[][] messagePixels = messagePicture.getPixels2D();  
+	  int count = 0; 
+	  for (int row = 0; row < this.getHeight(); row++)  { 
+		  for (int col = 0; col < this.getWidth(); col++)  { 
+			  currPixel = pixels[row][col]; 
+			  messagePixel = messagePixels[row][col]; 
+			  if ((currPixel.getRed() > 127 && currPixel.getRed() % 2 == 1) || (currPixel.getRed() <= 127 && currPixel.getRed() % 2 == 0)) {
+				  if ((currPixel.getGreen() > 127 && currPixel.getGreen() % 2 == 1) || (currPixel.getGreen() <= 127 && currPixel.getGreen() % 2 == 0)) {
+					  if ((currPixel.getBlue() > 127 && currPixel.getBlue() % 2 == 1) || (currPixel.getBlue() <= 127 && currPixel.getBlue() % 2 == 0)) {
+						  messagePixel.setColor(Color.WHITE); 
+					  } else {
+						  messagePixel.setColor(Color.BLACK);
+					  }
+				  } else {
+					  messagePixel.setColor(Color.BLACK);
+				  }
+			  } else {
+				  messagePixel.setColor(Color.BLACK);
+			  }
+			  count++;
+		  } 
+	  } 
+	  System.out.println(count);
+	  return messagePicture; 
+  }
+
   /* Main method for testing - each class in Java can have a main 
    * method 
    */

@@ -121,6 +121,16 @@ public class PictureTester
 	  canvas.explore();
   }
   
+  public static void testMyEncoderandDecoder() {
+	  Picture beach = new Picture("beach.jpg");
+	  Picture message = new Picture("apple_icon.jpg");
+	  beach.explore();
+	  beach.encode(message);
+	  beach.explore();
+	  Picture stegano = beach.decode();
+	  stegano.explore();
+  }
+  
   /** Main method for testing.  Every class can have a main
     * method in Java */
   public static void main(String[] args)
@@ -154,5 +164,6 @@ public class PictureTester
     //testSetRedToHalfValueInTopHalf();
     //testClearBlueOverValue(200);
     //testGetAverageForColumn(0);
+	 testMyEncoderandDecoder();
   }
 }
